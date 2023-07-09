@@ -37,3 +37,6 @@ Just(999).sink { completion in
 }
 
 // -MARK: 短縮系2
+Just(777).sink(receiveValue: { value in
+    print("簡単")
+})
