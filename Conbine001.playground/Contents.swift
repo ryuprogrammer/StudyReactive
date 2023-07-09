@@ -40,3 +40,28 @@ Just(999).sink { completion in
 Just(777).sink(receiveValue: { value in
     print("簡単")
 })
+
+
+/// その２: オペレーター
+
+// テストの点数
+class TestResult {
+    var score: String
+    init(score: String) {
+        self.score = score
+    }
+}
+
+let testResult = TestResult(score: "0")
+
+print("点数: \(testResult.score)")
+
+let cancellable = Just(100)
+    /// オペレーター: publisherとsubscribe間で処理をする場合
+    /// 今回はInt型をString型にする
+    .map({ value in
+        return String(value)
+    })
+    .assign(to: \.score, on: testResult)
+
+print("代入後の点数: \(testResult.score)")
