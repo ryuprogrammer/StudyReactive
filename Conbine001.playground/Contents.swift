@@ -44,24 +44,52 @@ Just(777).sink(receiveValue: { value in
 
 /// その２: オペレーター
 
+//    // テストの点数
+//    class TestResult {
+//        var score: String
+//        init(score: String) {
+//            self.score = score
+//        }
+//    }
+//
+//    let testResult = TestResult(score: "0")
+//
+//    print("点数: \(testResult.score)")
+//
+//    let cancellable = Just(100)
+//        /// オペレーター: publisherとsubscribe間で処理をする場合
+//        /// 今回はInt型をString型にする
+//        .map({ value in
+//            return String(value)
+//        })
+//        .assign(to: \.score, on: testResult)
+//
+//    print("代入後の点数: \(testResult.score)")
+
+extension Notification.Name {
+    static let finishCalc = Notification.Name("finishCalc")
+}
+
 // テストの点数
 class TestResult {
-    var score: String
-    init(score: String) {
+    var score: Int
+    init(score: Int) {
         self.score = score
     }
 }
 
-let testResult = TestResult(score: "0")
+let testResult = TestResult(score: 0)
 
 print("点数: \(testResult.score)")
 
-let cancellable = Just(100)
-    /// オペレーター: publisherとsubscribe間で処理をする場合
-    /// 今回はInt型をString型にする
-    .map({ value in
-        return String(value)
+let cancellable = NotificationCenter.default.publisher(for: .finishCalc, object: nil)
+    .map({ notification in
+        return notification.userInfo?["result"] as? Int ?? 0
     })
     .assign(to: \.score, on: testResult)
+
+// 採点処理
+
+NotificationCenter.default.post(name: .finishCalc, object: nil, userInfo: ["result": 90])
 
 print("代入後の点数: \(testResult.score)")
